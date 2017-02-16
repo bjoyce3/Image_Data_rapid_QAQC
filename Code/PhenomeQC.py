@@ -1,3 +1,4 @@
+import argparse
 import folium
 import folium.map
 import folium.element
@@ -5,10 +6,13 @@ import folium.plugins
 import glob
 import json
 import math
+import numpy
 import os
 import subprocess
 import string
+import sys
 import time
+
 
 try:
     import PIL.Image
@@ -17,21 +21,29 @@ try:
 except ImportError:
     scipy_installed = False
 
-exiftool = "/usr/local/bin/exiftool"
+exiftool = "/usr/local/bin/exiftool"  #Need to update to make a path for all OS
 
 ######################################################################
 # COMMAND LINE ARGS
 ######################################################################
+#Establish args from command line
+"""Ultimately there will be three required inputs: coords, camera, and ground. Currently, the check for camera is not written.
+inputfolder = sys.argv[1]
+outputfolder = sys.argv[-1]
+"""
+parser = argparse.ArgumentParser(description='Parses user input for PhenomeQC')
+#Required arguments
+parser.add_argument('-coords', required=True, help='Input file that contains the coordinates for the plot that has been flown. String of field plot in WKT.')
+#parser.add_argument('-camera', required=True, help='Type of camera used. Supported camera types: sequoia/parrot, rededge, rgb, hyperspectral. Inputs as a string.')
+parser.add_argument('-ground', required=True, type=float, help='Ground level from ocean height in meters. Set as a double.')
+parser.add_argument('-upper_flight_lvl', type=float, help='Upper bounds on flight level measured as above ground level in meters. Set as a double.')
+parser.add_argument('-lower_flight_lvl', type=float, help='Lower acceptable bound on flight level as above ground level in meters. Set as a double.')
 
-wkt = 'POLYGON((-87.005519 40.477489 , -87.000945 40.477490 , -87.000971 40.476615 , -87.005519 40.476634, -87.005519 40.477489))'
-folder = "/Users/kooper/Work/phenohack/test_data/complete_RedEdge_69meters/"
-#folder = "/home/test_data/complete_RedEdge_69meters/"
+#Optional arguments
+parser.add_argument('--resolution', type=float, help='Resolution of bounding boxes on the ground. Changes the size of bounding box on the ground. Default == half a meter. Input as a double in meters.')
 
-ground = 215
-lflight = 50
-uflight = 150
+args = parser.parse_args()
 
-#folder = "/home/test_data/complete_RedEdge_97meters/"
 
 ######################################################################
 # JEROME
@@ -381,7 +393,7 @@ def create_json(filename, results, keys=None, field=None):
 ######################################################################
 
 """Initiates the other functions to check all images. The list `results` is a list of dicts with key(image properties/info stored in the list keys):value(stored value of the properties). The key `error` has a list of values so there can be multiple error reports on anything that's outside of the parameters set."""
-field = GPS_Loader(wkt).simplified_field()
+field = GPS_Loader(args.coords).simplified_field()
 start = time.time()
 count = 0
 badimage = 0
@@ -390,13 +402,13 @@ okimage = 0
 points = list()
 keys = ['image', 'lat', 'lon', 'alt', 'fov', 'north', 'east', 'south', 'west']
 results = list()
-for image in sorted(glob.glob(folder + '*_1.tif')):
+for image in sorted(glob.glob(sys.argv[1] + '*_1.tif')):
     count += 1
     try:
         result = {'image': image, 'error': list()}
 
         # check GPS
-        gps_result = check_gps(image, ground, lflight, uflight, field)
+        gps_result = check_gps(image, args.ground, args.lower_flight_lvl, args.upper_flight_lvl, field)
         result['error'].extend(gps_result['error']) 
         for key in gps_result.keys():
             if key not in keys:
