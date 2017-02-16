@@ -28,15 +28,15 @@ exiftool = "/usr/local/bin/exiftool"  #Need to update to make a path for all OS
 ######################################################################
 #Establish args from command line
 """Ultimately there will be three required inputs: coords, camera, and ground. Currently, the check for camera is not written.
-inputfolder = sys.argv[1]
-outputfolder = sys.argv[-1]
 """
 parser = argparse.ArgumentParser(description='Parses user input for PhenomeQC')
 #Required arguments
+parser.add_argument('-inputfolder', required=True, help='Input folder of images that are to be assessed.')
 parser.add_argument('-coords', required=True, help='Input file that contains the coordinates for the plot that has been flown. String of field plot in WKT.')
 #parser.add_argument('-camera', required=True, help='Type of camera used. Supported camera types: sequoia/parrot, rededge, rgb, hyperspectral. Inputs as a string.')
 parser.add_argument('-ground', required=True, type=float, help='Ground level from ocean height in meters. Set as a double.')
 parser.add_argument('-upper_flight_lvl', type=float, help='Upper bounds on flight level measured as above ground level in meters. Set as a double.')
+parser.add_argument('-lower_flight_lvl', type=float, help='Lower acceptable bound on flight level as above ground level in meters. Set as a double.')
 parser.add_argument('-lower_flight_lvl', type=float, help='Lower acceptable bound on flight level as above ground level in meters. Set as a double.')
 
 #Optional arguments
@@ -402,7 +402,7 @@ okimage = 0
 points = list()
 keys = ['image', 'lat', 'lon', 'alt', 'fov', 'north', 'east', 'south', 'west']
 results = list()
-for image in sorted(glob.glob(sys.argv[1] + '*_1.tif')):
+for image in sorted(glob.glob(args.inputfolder + '*_1.tif')):
     count += 1
     try:
         result = {'image': image, 'error': list()}

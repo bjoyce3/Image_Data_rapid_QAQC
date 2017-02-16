@@ -4,7 +4,7 @@
 # In[ ]:
 
 #Test script
-#PhenomeQC.py complete_RedEdge_69meters --coord POLYGON((-87.005519 40.477489 , -87.000945 40.477490 , -87.000971 40.476615 , -87.005519 40.476634, -87.005519 40.477489)) --camera "rededge" --ground 217
+#python PhenomeQC.py -inputfolder /home/test_data/complete_RedEdge_69meters/ -coord "POLYGON((-87.005519 40.477489 , -87.000945 40.477490 , -87.000971 40.476615 , -87.005519 40.476634, -87.005519 40.477489))" -ground 200 -upper_flight_lvl 150 -lower_flight_lvl 50
 
 
 # In[1]:
