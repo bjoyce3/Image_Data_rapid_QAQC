@@ -37,7 +37,6 @@ parser.add_argument('-coords', required=True, help='Input file that contains the
 parser.add_argument('-ground', required=True, type=float, help='Ground level from ocean height in meters. Set as a double.')
 parser.add_argument('-upper_flight_lvl', type=float, help='Upper bounds on flight level measured as above ground level in meters. Set as a double.')
 parser.add_argument('-lower_flight_lvl', type=float, help='Lower acceptable bound on flight level as above ground level in meters. Set as a double.')
-parser.add_argument('-lower_flight_lvl', type=float, help='Lower acceptable bound on flight level as above ground level in meters. Set as a double.')
 
 #Optional arguments
 parser.add_argument('--resolution', type=float, help='Resolution of bounding boxes on the ground. Changes the size of bounding box on the ground. Default == half a meter. Input as a double in meters.')
