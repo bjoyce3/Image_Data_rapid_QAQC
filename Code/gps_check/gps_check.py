@@ -380,6 +380,7 @@ def create_json(filename, results, keys=None, field=None):
 # MAIN FUNCTION
 ######################################################################
 
+"""Initiates the other functions to check all images. The list `results` is a list of dicts with key(image properties/info stored in the list keys):value(stored value of the properties). The key `error` has a list of values so there can be multiple error reports on anything that's outside of the parameters set."""
 field = GPS_Loader(wkt).simplified_field()
 start = time.time()
 count = 0
@@ -396,7 +397,7 @@ for image in sorted(glob.glob(folder + '*_1.tif')):
 
         # check GPS
         gps_result = check_gps(image, ground, lflight, uflight, field)
-        result['error'].extend(gps_result['error'])
+        result['error'].extend(gps_result['error']) 
         for key in gps_result.keys():
             if key not in keys:
                 keys.append(key)
